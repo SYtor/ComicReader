@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Comic Reader</string>
+    <string name="version_placeholder">Version: %1$s</string>
+
+    <string name="home">Home</string>
+    <string name="history">History</string>
+    <string name="browse">Browse</string>
+
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/nav_graph"
+            app:startDestination="@id/main_fragment">
+
+    <fragment
+            android:id="@+id/main_fragment"
+            android:name="ua.syt0r.comicreader.ui.fragment.home.HomeFragment"
+            android:label="@string/home" />
+
+    <fragment
+            android:id="@+id/history_fragment"
+            android:name="ua.syt0r.comicreader.ui.fragment.history.HistoryFragment"
+            android:label="@string/history" />
+
+    <fragment
+            android:id="@+id/browse_fragment"
+            android:name="ua.syt0r.comicreader.ui.fragment.browse.BrowserFragment"
+            android:label="@string/browse" />
+
+</navigation>
