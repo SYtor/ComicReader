@@ -1,16 +1,14 @@
 package ua.syt0r.comicreader.ui.activity.viewer.renderer.pdf
 
 import android.content.Context
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import com.github.barteksc.pdfviewer.PDFView
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.ui.activity.viewer.ViewerActivity
 import ua.syt0r.comicreader.ui.activity.viewer.renderer.Renderer
 import java.io.File
 
-class PdfRenderer(private val context: Context, private val intent: Intent) : Renderer(context, intent) {
+class PdfRenderer(private val context: Context) : Renderer(context) {
 
     private lateinit var pdfView: PDFView
 
@@ -19,7 +17,15 @@ class PdfRenderer(private val context: Context, private val intent: Intent) : Re
         val root = LayoutInflater.from(context).inflate(R.layout.renderer_pdf_layout, null)
         pdfView = root.findViewById(R.id.pdf_view)
 
-        val path = intent.getStringExtra(ViewerActivity.FILE_KEY)
+        return root
+    }
+
+    override fun scrollToPosition(position: Int) {
+        pdfView.jumpTo(position)
+    }
+
+    override fun setData(data: Any) {
+        val path = data.toString()
         pdfView.fromFile(File(path))
             .onPageChange { page, pageCount -> positionChangeListener?.onPositionChanged(page, pageCount) }
             .onLoad { positionChangeListener?.onPositionChanged(0, it) }
@@ -28,12 +34,6 @@ class PdfRenderer(private val context: Context, private val intent: Intent) : Re
             .autoSpacing(true)
             .pageFling(true)
             .load()
-
-        return root
-    }
-
-    override fun scrollToPosition(position: Int) {
-        pdfView.jumpTo(position)
     }
 
 }

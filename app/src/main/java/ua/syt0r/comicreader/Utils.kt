@@ -1,11 +1,51 @@
 package ua.syt0r.comicreader
 
+import ua.syt0r.comicreader.ui.fragment.browse.BrowserFragment
 import java.io.File
 import java.util.regex.Pattern
 
 class Utils {
 
     companion object {
+
+        val IMAGE_EXTENSIONS = arrayOf("jpg", "png", "jpeg", "bmp")
+        val ZIP_EXTENSIONS = arrayOf("zip", "cbz")
+        val RAR_EXTENSIONS = arrayOf("rar", "cbr")
+
+        fun getFileType(file: File): Int {
+
+            if (file.isFile) {
+
+                val path = file.path
+                val indexOfLastSlash = path.lastIndexOf("/")
+                val nameWithExtension = path.substring(indexOfLastSlash + 1)
+                val dotIndex = nameWithExtension.lastIndexOf(".")
+                val extension = if (dotIndex == -1) "" else nameWithExtension.substring(Math.min(dotIndex + 1, nameWithExtension.length))
+
+                when(extension) {
+                    in IMAGE_EXTENSIONS -> return FileType.IMAGE
+                    in ZIP_EXTENSIONS -> return FileType.ZIP
+                    in RAR_EXTENSIONS -> return FileType.RAR
+                    "pdf" -> return FileType.PDF
+                    else -> FileType.UNKNOWN
+                }
+
+            }
+
+            return FileType.FOLDER
+
+        }
+
+        fun getImagesFromFolder(dir: File): ArrayList<String> {
+            val files = ArrayList<String>()
+            dir.listFiles().forEach {
+                val p = it.path
+                if (p.substring(p.lastIndexOf(".") + 1) in IMAGE_EXTENSIONS)
+                    files.add(it.path)
+            }
+            files.sortWith(Comparator { p1,p2 -> Utils.compareStringsWithNumbers(p1, p2) })
+            return files
+        }
 
         fun compareFilesWithNumbers(f1: File, f2: File): Int {
 

@@ -7,11 +7,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.facebook.drawee.backends.pipeline.Fresco
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import ua.syt0r.comicreader.FileType
 import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.Utils
 import java.io.File
@@ -25,6 +28,7 @@ class FolderAdapter: RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
     var files: List<File>? = null
 
     var onFileSelectListener: OnFileSelectListener? = null
+    var onFileLongClickListener: OnFileLongClickListener? = null
 
     val bgScope = CoroutineScope(Dispatchers.IO)
     val uiScope = CoroutineScope(Dispatchers.Main)
@@ -86,7 +90,13 @@ class FolderAdapter: RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
 
         file?.also {
             holder.textView.text = file.name
-            holder.imageView.setImageResource(if (file.isFile) R.drawable.ic_file else R.drawable.ic_folder)
+            val type = Utils.getFileType(file)
+            when(type) {
+                FileType.FOLDER -> holder.imageView.setImageResource(R.drawable.ic_folder)
+                FileType.IMAGE -> {}
+                FileType.PDF -> holder.imageView.setImageResource(R.drawable.ic_google_drive_pdf_file)
+                else -> holder.imageView.setImageResource(R.drawable.ic_file)
+            }
         }
 
     }
@@ -97,6 +107,7 @@ class FolderAdapter: RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
         val imageView : ImageView = itemView.findViewById(R.id.image)
 
         init {
+
             itemView.setOnClickListener {
                 bgScope.launch {
 
@@ -136,12 +147,40 @@ class FolderAdapter: RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
 
                 }
             }
+
+            itemView.setOnLongClickListener {
+
+                val file= if (level == 0) {
+                    rootDirectories?.getOrNull(adapterPosition)
+                } else {
+                    files?.getOrNull(adapterPosition - 1)
+                }
+
+                file?.also {
+
+                    AlertDialog.Builder(itemView.context)
+                        .setTitle(R.string.pin)
+                        .setMessage(R.string.pin_add_message)
+                        .setPositiveButton(R.string.pin){ _,_ -> onFileLongClickListener?.onFileLongClick(file) }
+                        .setNegativeButton(R.string.cancel){ _,_ -> }
+                        .create()
+                        .show()
+
+                }
+
+                return@setOnLongClickListener true
+            }
+
         }
 
     }
 
     interface OnFileSelectListener {
         fun onFileSelected(dir: File, file: File)
+    }
+
+    interface OnFileLongClickListener {
+        fun onFileLongClick(file: File)
     }
 
 }

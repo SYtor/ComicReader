@@ -6,4 +6,11 @@
     <string name="history">History</string>
     <string name="browse">Browse</string>
 
+    <string name="pins">Pins</string>
+    <string name="pin">Pin</string>
+    <string name="pin_add_message">Pin this item?</string>
+    <string name="pin_remove_message">Unpin this item?</string>
+
+    <string name="cancel">Cancel</string>
+
 </resources>

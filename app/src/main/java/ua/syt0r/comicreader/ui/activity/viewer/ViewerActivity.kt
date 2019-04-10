@@ -2,24 +2,32 @@ package ua.syt0r.comicreader.ui.activity.viewer
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import me.zhanghai.android.systemuihelper.SystemUiHelper
+import ua.syt0r.comicreader.FileType
 import ua.syt0r.comicreader.R
+import ua.syt0r.comicreader.Utils
 import ua.syt0r.comicreader.ui.activity.viewer.renderer.pdf.PdfRenderer
 import ua.syt0r.comicreader.ui.activity.viewer.renderer.image.ImageRenderer
 import ua.syt0r.comicreader.ui.activity.viewer.renderer.Renderer
 import ua.syt0r.comicreader.ui.activity.viewer.renderer.RendererContainer
+import java.io.File
 
 class ViewerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_viewer)
+
+        val viewModel = ViewModelProviders.of(this).get(ViewerViewModel::class.java)
 
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         val rendererContainer = findViewById<RendererContainer>(R.id.renderer_container)
@@ -36,14 +44,19 @@ class ViewerActivity : AppCompatActivity() {
             SystemUiHelper.FLAG_IMMERSIVE_STICKY, SystemUIVisibilityListener(toolbar, bottomLayout))
         systemUiHelper.show()
 
-        //Setup recycler
+        //Load data
 
-        val type = intent.getIntExtra(TYPE_KEY, TYPE_IMAGE_ARRAY)
+        val path = intent.data!!.path
+        val file = File(path)
+        val type = Utils.getFileType(file)
+        viewModel.loadData(file, type)
+
+        Log.d("Debug", "path: $path")
+        Log.d("Debug", "type: $type")
 
         val renderer = when (type) {
-            TYPE_IMAGE_ARRAY -> ImageRenderer(this, intent)
-            TYPE_PDF -> PdfRenderer(this, intent)
-            else -> ImageRenderer(this, intent)
+            FileType.PDF -> PdfRenderer(this)
+            else -> ImageRenderer(this)
         }
 
         rendererContainer.setOnClickListener { systemUiHelper.toggle() }
@@ -71,6 +84,17 @@ class ViewerActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) { isTouching = false }
         })
 
+        viewModel.mutableData.observe(this, Observer {
+
+            if (it != null) {
+                renderer.setData(it)
+                return@Observer
+            }
+
+            //TODO loading message
+
+        })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -86,19 +110,6 @@ class ViewerActivity : AppCompatActivity() {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    companion object {
-
-        const val TYPE_KEY = "type_key"
-
-        const val TYPE_IMAGE_ARRAY = 0
-        const val TYPE_PDF = 1
-
-        const val IMAGE_ARRAY_KEY = "array_key"
-        const val FILE_KEY = "file_key"
-
-        const val DEFAULT_POSITION_KEY = "position_key"
     }
 
 }

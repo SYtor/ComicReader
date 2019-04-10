@@ -7,17 +7,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.db.entity.History
+import ua.syt0r.comicreader.db.DbFile
 import java.io.File
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
-    var historyRecords: List<History>? = null
+    var historyRecords: List<DbFile>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
             LayoutInflater.from(parent.context)
-                .inflate(R.layout.adapter_viewer_item, parent, false))
+                .inflate(R.layout.adapter_horizontal_item, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -28,7 +28,6 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
         historyRecords?.getOrNull(position)?.also {  history ->
             val fileName = File(history.path).name
-
             holder.textView.text = fileName
         }
 

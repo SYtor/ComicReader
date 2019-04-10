@@ -7,7 +7,7 @@ import ua.syt0r.comicreader.db.ComicDatabase
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 
     val database = ComicDatabase.getInstance(application)
-    val mutableHistory = database.historyDao().subscribeOnHistory()
-    val mutablePins = database.pinDao().subscribeOnPins()
+    val mutableHistory = database.dbFileDao().subscribeOnHistory()
+    val mutablePins = database.dbFileDao().subscribeOnPins()
 
 }

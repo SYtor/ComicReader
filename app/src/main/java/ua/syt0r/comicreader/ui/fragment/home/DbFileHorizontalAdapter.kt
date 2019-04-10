@@ -6,14 +6,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import ua.syt0r.comicreader.FileType
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.db.entity.Pin
-import ua.syt0r.comicreader.db.entity.PinType
+import ua.syt0r.comicreader.db.DbFile
 import java.io.File
 
-class PinAdapter : RecyclerView.Adapter<PinAdapter.ViewHolder>(){
+class DbFileHorizontalAdapter : RecyclerView.Adapter<DbFileHorizontalAdapter.ViewHolder>(){
 
-    var pins: List<Pin>? = null
+    var list: List<DbFile>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -22,17 +22,18 @@ class PinAdapter : RecyclerView.Adapter<PinAdapter.ViewHolder>(){
     }
 
     override fun getItemCount(): Int {
-        return pins?.size ?: 0
+        return list?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        pins?.getOrNull(position)?.also { pin ->
-            when(pin.type) {
-                PinType.IMAGE -> holder.imageView.setImageResource(R.drawable.ic_file)
-                PinType.FILE -> holder.imageView.setImageResource(R.drawable.ic_file)
-                PinType.FOLDER -> holder.imageView.setImageResource(R.drawable.ic_folder)
+        list?.getOrNull(position)?.also { dbFile ->
+            holder.textView.text = File(dbFile.path).name
+            when(dbFile.type) {
+                FileType.FOLDER -> holder.imageView.setImageResource(R.drawable.ic_folder)
+                FileType.IMAGE -> {}
+                FileType.PDF -> holder.imageView.setImageResource(R.drawable.ic_google_drive_pdf_file)
+                else -> holder.imageView.setImageResource(R.drawable.ic_file)
             }
-            holder.textView.text = File(pin.path).name
         }
     }
 

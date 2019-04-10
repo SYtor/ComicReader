@@ -3,14 +3,15 @@ package ua.syt0r.comicreader.ui.fragment.history
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import ua.syt0r.comicreader.db.ComicDatabase
-import ua.syt0r.comicreader.db.entity.History
+import ua.syt0r.comicreader.db.DbFile
 
 class HistoryViewModel(application: Application) : AndroidViewModel(application) {
     private val database = ComicDatabase.getInstance(application)
-    val historyRecords = database.historyDao().subscribeOnHistory()
+    val historyRecords = database.dbFileDao().subscribeOnHistory()
 
-    fun updateReadDate(history: History) {
-        history.readTime = System.currentTimeMillis()
-        database.historyDao().update(history)
+    fun updateReadDate(dbFile: DbFile) {
+        dbFile.readTime = System.currentTimeMillis()
+        database.dbFileDao().update(dbFile)
     }
+
 }

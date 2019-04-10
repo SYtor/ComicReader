@@ -1,20 +1,14 @@
-package ua.syt0r.comicreader.db.entity
+package ua.syt0r.comicreader.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Pin(
+data class DbFile(
     @PrimaryKey(autoGenerate = true) var id: Long = 0L,
     var path: String = "",
+    var readTime: Long = 0L,
     var type: Int = 0,
+    var pinned: Int = 0,
     var pinnedDate: Long = 0L
 )
-
-class PinType {
-    companion object {
-        const val IMAGE = 0
-        const val FILE = 1
-        const val FOLDER = 2
-    }
-}

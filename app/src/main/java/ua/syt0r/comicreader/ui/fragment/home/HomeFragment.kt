@@ -26,25 +26,25 @@ class HomeFragment : Fragment() {
 
 
         val historyRecycler = root.findViewById<RecyclerView>(R.id.history_recycler)
-        val historyAdapter = PinAdapter()
+        val historyAdapter = DbFileHorizontalAdapter()
 
         historyRecycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         historyRecycler.adapter = historyAdapter
 
-        viewModel.mutablePins.observe(this, Observer {
-            historyAdapter.pins = it
+        viewModel.mutableHistory.observe(this, Observer {
+            historyAdapter.list = it
             historyAdapter.notifyDataSetChanged()
         })
 
 
         val pinRecycler = root.findViewById<RecyclerView>(R.id.pins_recycler)
-        val pinAdapter = PinAdapter()
+        val pinAdapter = DbFileHorizontalAdapter()
 
         pinRecycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         pinRecycler.adapter = pinAdapter
 
         viewModel.mutablePins.observe(this, Observer {
-            pinAdapter.pins = it
+            pinAdapter.list = it
             pinAdapter.notifyDataSetChanged()
         })
 
