@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import ua.syt0r.comicreader.db.dao.DbFileDao
+import ua.syt0r.comicreader.db.entity.DbFile
 
 @Database(entities = [DbFile::class], version = 1)
 abstract class ComicDatabase : RoomDatabase() {

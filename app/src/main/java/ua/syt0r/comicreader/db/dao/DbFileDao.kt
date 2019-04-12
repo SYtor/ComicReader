@@ -1,7 +1,8 @@
-package ua.syt0r.comicreader.db
+package ua.syt0r.comicreader.db.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import ua.syt0r.comicreader.db.entity.DbFile
 
 @Dao
 interface DbFileDao {
@@ -18,7 +19,13 @@ interface DbFileDao {
     @Delete
     fun delete(file: DbFile)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insert(file: DbFile): Long
+
+    @Query("SELECT * FROM DbFile WHERE path=:path")
+    fun getByFilePath(path: String): DbFile?
+
+    @Query("SELECT thumb FROM DbFile WHERE path=:path")
+    fun getThumb(path: String): String?
 
 }

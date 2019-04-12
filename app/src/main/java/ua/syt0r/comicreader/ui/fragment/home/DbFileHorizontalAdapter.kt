@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ua.syt0r.comicreader.FileType
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.db.DbFile
+import ua.syt0r.comicreader.db.entity.DbFile
 import java.io.File
 
 class DbFileHorizontalAdapter : RecyclerView.Adapter<DbFileHorizontalAdapter.ViewHolder>(){

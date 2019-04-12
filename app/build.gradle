@@ -40,6 +40,7 @@ dependencies {
     implementation 'android.arch.navigation:navigation-fragment:1.0.0'
     implementation "android.arch.navigation:navigation-ui-ktx:1.0.0"
 
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.facebook.fresco:fresco:1.12.1'
     implementation 'com.github.piasy:BigImageViewer:1.5.6'
 

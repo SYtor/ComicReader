@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.Utils
 import ua.syt0r.comicreader.db.ComicDatabase
-import ua.syt0r.comicreader.db.DbFile
+import ua.syt0r.comicreader.db.entity.DbFile
 import ua.syt0r.comicreader.ui.activity.viewer.ViewerActivity
 import java.io.File
 
@@ -38,7 +39,9 @@ class BrowserFragment : Fragment() {
         val recyclerView = root.findViewById<RecyclerView>(R.id.recycler)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val adapter = FolderAdapter()
+        val viewModel = ViewModelProviders.of(this).get(BrowseViewModel::class.java)
+
+        val adapter = FolderAdapter(viewModel)
         adapter.currentFolderView = root.findViewById(R.id.parent_folder_text)
         adapter.progressBar = root.findViewById(R.id.progress)
         adapter.init(context!!)
@@ -55,8 +58,10 @@ class BrowserFragment : Fragment() {
             override fun onFileLongClick(file: File) {
                 bgScope.launch {
                     database.dbFileDao().insert(
-                        DbFile(0L, file.path,0, Utils.getFileType(file),
-                            1, System.currentTimeMillis())
+                        DbFile(
+                            0L, file.path, 0, Utils.getFileType(file),
+                            1, System.currentTimeMillis()
+                        )
                     )
                 }
             }

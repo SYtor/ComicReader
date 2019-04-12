@@ -11,6 +11,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.view.SimpleDraweeView
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,7 +21,7 @@ import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.Utils
 import java.io.File
 
-class FolderAdapter: RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
+class FolderAdapter(private val viewModel: BrowseViewModel): RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
 
     var rootDirectories: List<File>? = null
     var level = 0
@@ -93,8 +95,20 @@ class FolderAdapter: RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
             val type = Utils.getFileType(file)
             when(type) {
                 FileType.FOLDER -> holder.imageView.setImageResource(R.drawable.ic_folder)
-                FileType.IMAGE -> {}
-                FileType.PDF -> holder.imageView.setImageResource(R.drawable.ic_google_drive_pdf_file)
+                FileType.IMAGE -> {
+
+                }
+                FileType.PDF -> {
+                    bgScope.launch {
+                        val dbFile = viewModel.getDbFile(file.path)
+                        if (dbFile != null && dbFile.thumb.isNotEmpty()) {
+                            uiScope.launch { Picasso.get().load(dbFile.thumb).into(holder.imageView) }
+                        } else {
+                            uiScope.launch { Picasso.get().load(R.drawable.ic_google_drive_pdf_file).into(holder.imageView) }
+                            Utils.createThumbnail(holder.itemView.context.applicationContext, viewModel.database, file)
+                        }
+                    }
+                }
                 else -> holder.imageView.setImageResource(R.drawable.ic_file)
             }
         }

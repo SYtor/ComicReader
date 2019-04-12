@@ -1,6 +1,16 @@
 package ua.syt0r.comicreader
 
-import ua.syt0r.comicreader.ui.fragment.browse.BrowserFragment
+import android.content.Context
+import android.graphics.Bitmap
+import android.os.ParcelFileDescriptor
+import androidx.core.content.ContextCompat
+import com.github.barteksc.pdfviewer.PDFView
+import com.shockwave.pdfium.PdfiumCore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import ua.syt0r.comicreader.db.ComicDatabase
+import ua.syt0r.comicreader.db.entity.DbFile
 import java.io.File
 import java.util.regex.Pattern
 
@@ -45,6 +55,50 @@ class Utils {
             }
             files.sortWith(Comparator { p1,p2 -> Utils.compareStringsWithNumbers(p1, p2) })
             return files
+        }
+
+        fun createThumbnail(context: Context, database: ComicDatabase, file: File) = CoroutineScope(Dispatchers.IO).launch {
+            val fileType = getFileType(file)
+
+            var thumbPath: String? = null
+
+            when(fileType) {
+                FileType.PDF -> {
+
+
+                    val pdfiumCore = PdfiumCore(context)
+                    val pdfDoc = pdfiumCore.newDocument(ParcelFileDescriptor.open(file,
+                        ParcelFileDescriptor.MODE_READ_ONLY))
+
+                    val width = 200
+                    val height = 200
+                    val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565)
+
+                    pdfiumCore.renderPageBitmap(pdfDoc, bitmap, 0, 0, 0, width, height)
+
+                    val thumbFile = File(ContextCompat.getExternalFilesDirs(context, null).first(),
+                        "${System.currentTimeMillis()}.png")
+                    val fOut = thumbFile.outputStream()
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut)
+                    fOut.flush()
+                    fOut.close()
+
+                    thumbPath = thumbFile.path
+
+                }
+            }
+
+            thumbPath?.also {
+                val dao = database.dbFileDao()
+                val dbFile = dao.getByFilePath(file.path)
+                if (dbFile != null) {
+                    dbFile.thumb = it
+                    dao.update(dbFile)
+                } else {
+                    dao.insert(DbFile(0L, file.path,  0L, fileType, 0, 0, it))
+                }
+            }
+
         }
 
         fun compareFilesWithNumbers(f1: File, f2: File): Int {

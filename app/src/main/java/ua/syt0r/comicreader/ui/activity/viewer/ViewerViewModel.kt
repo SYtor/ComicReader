@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import ua.syt0r.comicreader.FileType
 import ua.syt0r.comicreader.Utils
 import ua.syt0r.comicreader.db.ComicDatabase
-import ua.syt0r.comicreader.db.DbFile
+import ua.syt0r.comicreader.db.entity.DbFile
 import java.io.File
 
 class ViewerViewModel(application: Application) : AndroidViewModel(application) {
@@ -48,10 +48,6 @@ class ViewerViewModel(application: Application) : AndroidViewModel(application) 
         dbFile.readTime = System.currentTimeMillis()
         dbFile.type = type
         database.dbFileDao().insert(dbFile)
-
-    }
-
-    fun createThumbnail() {
 
     }
 
