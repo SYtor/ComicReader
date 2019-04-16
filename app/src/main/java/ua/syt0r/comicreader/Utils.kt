@@ -1,9 +1,14 @@
 package ua.syt0r.comicreader
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Bundle
 import android.os.ParcelFileDescriptor
+import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import com.github.barteksc.pdfviewer.PDFView
 import com.shockwave.pdfium.PdfiumCore
 import kotlinx.coroutines.CoroutineScope
@@ -11,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ua.syt0r.comicreader.db.ComicDatabase
 import ua.syt0r.comicreader.db.entity.DbFile
+import ua.syt0r.comicreader.ui.activity.viewer.ViewerActivity
 import java.io.File
 import java.util.regex.Pattern
 
@@ -142,7 +148,21 @@ class Utils {
             return nums
         }
 
-    }
+        fun onFileClick(file: File, navController: NavController, context: Context) {
+            when(getFileType(file)) {
+                FileType.PDF, FileType.ZIP, FileType.RAR, FileType.IMAGE -> {
+                    context.startActivity(Intent(context, ViewerActivity::class.java).apply {
+                        data = Uri.fromFile(file)
+                    })
+                }
+                FileType.FOLDER -> {
+                    navController.navigate(R.id.browse_fragment, Bundle().apply {
+                        putString("","")
+                    })
+                }
+            }
+        }
 
+    }
 
 }

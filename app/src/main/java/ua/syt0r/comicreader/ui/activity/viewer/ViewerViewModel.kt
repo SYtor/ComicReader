@@ -43,11 +43,17 @@ class ViewerViewModel(application: Application) : AndroidViewModel(application) 
 
         //TODO update if exist
 
-        val dbFile = DbFile()
-        dbFile.path = file.path
-        dbFile.readTime = System.currentTimeMillis()
-        dbFile.type = type
-        database.dbFileDao().insert(dbFile)
+        val dbFile = database.dbFileDao().getByFilePath(file.path)
+        if (dbFile == null) {
+            val newDbFile = DbFile()
+            newDbFile.path = file.path
+            newDbFile.readTime = System.currentTimeMillis()
+            newDbFile.type = type
+            database.dbFileDao().insert(newDbFile)
+        } else {
+            dbFile.readTime = System.currentTimeMillis()
+            database.dbFileDao().update(dbFile)
+        }
 
     }
 

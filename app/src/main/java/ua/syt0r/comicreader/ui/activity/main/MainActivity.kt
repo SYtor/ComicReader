@@ -8,6 +8,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.MobileAds
 import com.google.android.material.navigation.NavigationView
 import ua.syt0r.comicreader.R
 
@@ -30,6 +33,9 @@ class MainActivity : AppCompatActivity() {
         toolbar.setupWithNavController(navController, appBarConfiguration)
         navigationView.setupWithNavController(navController)
         setupActionBarWithNavController(navController, appBarConfiguration)
+
+        MobileAds.initialize(this, getString(R.string.ad_mob_app_id))
+        findViewById<AdView>(R.id.ad_view).loadAd(AdRequest.Builder().build())
 
     }
 }
