@@ -15,10 +15,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.util.Utils
 import ua.syt0r.comicreader.database.ComicDatabase
 import ua.syt0r.comicreader.database.entity.DbFile
 import ua.syt0r.comicreader.ui.viewer.ViewerActivity
+import ua.syt0r.comicreader.util.getFileType
 import java.io.File
 
 class BrowserFragment : Fragment() {
@@ -59,7 +59,7 @@ class BrowserFragment : Fragment() {
                 bgScope.launch {
                     database.dbFileDao().insert(
                         DbFile(
-                            0L, file.path, 0, Utils.getFileType(file),
+                            0L, file.path, 0, getFileType(file),
                             1, System.currentTimeMillis()
                         )
                     )

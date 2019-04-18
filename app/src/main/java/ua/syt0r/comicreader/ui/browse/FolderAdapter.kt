@@ -14,9 +14,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ua.syt0r.comicreader.util.FileType
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.util.Utils
+import ua.syt0r.comicreader.util.*
 import java.io.File
 
 class FolderAdapter(private val viewModel: BrowseViewModel): RecyclerView.Adapter<FolderAdapter.ViewHolder>() {
@@ -90,7 +89,7 @@ class FolderAdapter(private val viewModel: BrowseViewModel): RecyclerView.Adapte
 
         file?.also {
             holder.textView.text = file.name
-            val type = Utils.getFileType(file)
+            val type = getFileType(file)
             when(type) {
                 FileType.FOLDER -> holder.imageView.setImageResource(R.drawable.ic_folder)
                 FileType.IMAGE -> Picasso.get().load(file).into(holder.imageView)
@@ -101,7 +100,7 @@ class FolderAdapter(private val viewModel: BrowseViewModel): RecyclerView.Adapte
                             uiScope.launch { Picasso.get().load(dbFile.thumb).into(holder.imageView) }
                         } else {
                             uiScope.launch { Picasso.get().load(R.drawable.ic_google_drive_pdf_file).into(holder.imageView) }
-                            Utils.createThumbnail(holder.itemView.context.applicationContext, viewModel.database, file)
+                            createThumbnail(holder.itemView.context.applicationContext, viewModel.database, file)
                         }
                     }
                 }
@@ -128,7 +127,7 @@ class FolderAdapter(private val viewModel: BrowseViewModel): RecyclerView.Adapte
                         level -= 1
                         currentRoot = currentRoot?.parentFile
                         files = currentRoot?.listFiles()?.asList()?.sortedWith(Comparator { f1, f2 ->
-                            Utils.compareFilesWithNumbers(f1, f2)
+                            compareFilesWithNumbers(f1, f2)
                         })
                         updateAdapter()
 
@@ -146,7 +145,7 @@ class FolderAdapter(private val viewModel: BrowseViewModel): RecyclerView.Adapte
                             level += 1
                             currentRoot = file
                             files = currentRoot?.listFiles()?.asList()?.sortedWith(Comparator { f1, f2 ->
-                                Utils.compareFilesWithNumbers(f1, f2)
+                                compareFilesWithNumbers(f1, f2)
                             })
                             updateAdapter()
                         }

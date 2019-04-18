@@ -13,4 +13,10 @@
 
     <string name="cancel">Cancel</string>
 
+    <string name="empty_history_text">You haven\'t read any manga yet</string>
+    <string name="empty_pins_text">
+        No pins yet. Pin folders and files by\n
+        long clicking at browse screen
+    </string>
+
 </resources>

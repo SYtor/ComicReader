@@ -17,7 +17,7 @@
             <Button
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" android:text="Browse storage"/>
+                    android:layout_weight="1" android:text="View storage"/>
 
             <Button
                     android:layout_width="0dp"
@@ -29,13 +29,29 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Last readed: "
+                android:text="Last readed:"
                 android:layout_margin="8dp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/history_recycler"/>
+                android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/history_recycler"
+                    android:minWidth="200dp"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:id="@+id/empty_history_text"
+                    android:text="@string/empty_history_text"/>
+
+        </FrameLayout>
+
 
         <TextView
                 android:layout_width="wrap_content"
@@ -43,10 +59,25 @@
                 android:text="Pins: "
                 android:layout_margin="8dp"/>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/pins_recycler"/>
+                android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pins_recycler"
+                    android:minWidth="200dp"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:id="@+id/empty_pins_text"
+                    android:text="@string/empty_pins_text"/>
+
+        </FrameLayout>
 
     </LinearLayout>
 

@@ -10,9 +10,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ua.syt0r.comicreader.util.FileType
-import ua.syt0r.comicreader.util.Utils
 import ua.syt0r.comicreader.database.ComicDatabase
 import ua.syt0r.comicreader.database.entity.DbFile
+import ua.syt0r.comicreader.util.getImagesFromFolder
 import java.io.File
 
 class ViewerViewModel(application: Application) : AndroidViewModel(application) {
@@ -62,7 +62,7 @@ class ViewerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private fun loadImages(file: File) {
-        val files = Utils.getImagesFromFolder(file.parentFile)
+        val files = getImagesFromFolder(file.parentFile)
         mutableData.postValue(files)
     }
 
@@ -75,7 +75,7 @@ class ViewerViewModel(application: Application) : AndroidViewModel(application) 
         Log.d("Debug", "Command: $command")
         Log.d("Debug", "Command result: $result")
 
-        val images = Utils.getImagesFromFolder(tmpFolder)
+        val images = getImagesFromFolder(tmpFolder)
         mutableData.postValue(images)
 
     }

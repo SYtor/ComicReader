@@ -14,11 +14,11 @@ import androidx.lifecycle.ViewModelProviders
 import me.zhanghai.android.systemuihelper.SystemUiHelper
 import ua.syt0r.comicreader.util.FileType
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.util.Utils
 import ua.syt0r.comicreader.ui.viewer.renderer.pdf.PdfRenderer
 import ua.syt0r.comicreader.ui.viewer.renderer.image.ImageRenderer
 import ua.syt0r.comicreader.ui.viewer.renderer.Renderer
 import ua.syt0r.comicreader.ui.viewer.renderer.RendererContainer
+import ua.syt0r.comicreader.util.getFileType
 import java.io.File
 
 class ViewerActivity : AppCompatActivity() {
@@ -48,7 +48,7 @@ class ViewerActivity : AppCompatActivity() {
 
         val path = intent.data!!.path
         val file = File(path)
-        val type = Utils.getFileType(file)
+        val type = getFileType(file)
         viewModel.loadData(file, type)
 
         Log.d("Debug", "path: $path")
