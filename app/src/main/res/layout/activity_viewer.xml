@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <ua.syt0r.comicreader.ui.activity.viewer.renderer.RendererContainer
+    <ua.syt0r.comicreader.ui.viewer.renderer.RendererContainer
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/renderer_container"

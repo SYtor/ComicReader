@@ -6,17 +6,17 @@
 
     <fragment
             android:id="@+id/main_fragment"
-            android:name="ua.syt0r.comicreader.ui.fragment.home.HomeFragment"
+            android:name="ua.syt0r.comicreader.ui.home.HomeFragment"
             android:label="@string/home" />
 
     <fragment
             android:id="@+id/history_fragment"
-            android:name="ua.syt0r.comicreader.ui.fragment.history.HistoryFragment"
+            android:name="ua.syt0r.comicreader.ui.history.HistoryFragment"
             android:label="@string/history" />
 
     <fragment
             android:id="@+id/browse_fragment"
-            android:name="ua.syt0r.comicreader.ui.fragment.browse.BrowserFragment"
+            android:name="ua.syt0r.comicreader.ui.browse.BrowserFragment"
             android:label="@string/browse" />
 
 </navigation>
