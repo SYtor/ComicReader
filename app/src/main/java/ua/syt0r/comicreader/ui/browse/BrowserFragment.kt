@@ -1,75 +1,77 @@
 package ua.syt0r.comicreader.ui.browse
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import ua.syt0r.comicreader.R
-import ua.syt0r.comicreader.database.ComicDatabase
-import ua.syt0r.comicreader.database.entity.DbFile
 import ua.syt0r.comicreader.ui.viewer.ViewerActivity
-import ua.syt0r.comicreader.util.getFileType
+import ua.syt0r.comicreader.util.getComponent
 import java.io.File
+import javax.inject.Inject
 
-class BrowserFragment : Fragment() {
+class BrowserFragment : Fragment(), BrowseMVP.View {
 
-    private lateinit var database: ComicDatabase
+    @Inject lateinit var presenter: BrowseMVP.Presenter
 
-    private val bgScope = CoroutineScope(Dispatchers.IO)
-    private val uiScope = CoroutineScope(Dispatchers.Main)
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        database = ComicDatabase.getInstance(context.applicationContext)
-    }
+    private lateinit var adapter: FolderAdapter
+    private lateinit var currentFolderText: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_browse, container, false)
 
+        getComponent(activity!!).inject(this)
+
         val recyclerView = root.findViewById<RecyclerView>(R.id.recycler)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        val viewModel = ViewModelProviders.of(this).get(BrowseViewModel::class.java)
+        adapter = FolderAdapter()
+        recyclerView.adapter = adapter
 
-        val adapter = FolderAdapter(viewModel)
-        adapter.currentFolderView = root.findViewById(R.id.parent_folder_text)
-        adapter.progressBar = root.findViewById(R.id.progress)
-        adapter.init(context!!)
+        currentFolderText = root.findViewById(R.id.parent_folder_text)
+        progressBar = root.findViewById(R.id.progress)
 
         adapter.onFileSelectListener = object : FolderAdapter.OnFileSelectListener {
-            override fun onFileSelected(dir: File, file: File) {
-                val intent = Intent(context, ViewerActivity::class.java)
-                intent.data = Uri.fromFile(file)
-                context?.startActivity(intent)
+            override fun onFileSelected(isUpDirSelected: Boolean, file: File) {
+
+                if (file.isFile) {
+                    context?.startActivity(Intent(context, ViewerActivity::class.java).apply {
+                        data = Uri.fromFile(file)
+                    })
+                } else {
+                    presenter.updateList(file, isUpDirSelected)
+                }
             }
         }
 
         adapter.onFileLongClickListener = object : FolderAdapter.OnFileLongClickListener {
             override fun onFileLongClick(file: File) {
-                bgScope.launch {
-                    database.dbFileDao().insert(
-                        DbFile(
-                            0L, file.path, 0, getFileType(file),
-                            1, System.currentTimeMillis()
-                        )
-                    )
-                }
+                presenter.pinFile(file)
             }
         }
 
-        recyclerView.adapter = adapter
+        presenter.attachView(this, this)
+        presenter.updateList(null, false)
 
         return root
     }
 
+    override fun setProgressBarLoading(isLoading: Boolean) {
+        progressBar.visibility = if (isLoading) View.VISIBLE else View.INVISIBLE
+    }
+
+    override fun updateList(isTopLevelDir: Boolean, files: List<File>) {
+        adapter.files = files
+        adapter.isTopLevelDir = isTopLevelDir
+        adapter.notifyDataSetChanged()
+    }
 }

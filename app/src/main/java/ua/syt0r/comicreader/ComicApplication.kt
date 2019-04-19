@@ -2,6 +2,8 @@ package ua.syt0r.comicreader
 
 import androidx.multidex.MultiDexApplication
 import ua.syt0r.comicreader.dagger.*
+import ua.syt0r.comicreader.ui.browse.BrowseModule
+import ua.syt0r.comicreader.ui.history.HistoryModule
 import ua.syt0r.comicreader.ui.home.HomeModule
 
 class ComicApplication : MultiDexApplication() {
@@ -11,6 +13,8 @@ class ComicApplication : MultiDexApplication() {
             .applicationModule(ApplicationModule(this))
             .databaseModule(DatabaseModule())
             .homeModule(HomeModule())
+            .historyModule(HistoryModule())
+            .browseModule(BrowseModule())
             .build()
     }
 

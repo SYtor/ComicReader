@@ -1,6 +1,7 @@
 package ua.syt0r.comicreader.ui.home
 
 import ua.syt0r.comicreader.database.entity.DbFile
+import ua.syt0r.comicreader.ui.base.BasePresenter
 
 class HomeMVP {
 
@@ -14,10 +15,8 @@ class HomeMVP {
 
     }
 
-    interface Presenter {
-
-        fun loadData()
-
+    abstract class Presenter : BasePresenter<View>() {
+        abstract fun loadData()
     }
 
 }

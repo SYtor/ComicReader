@@ -8,6 +8,6 @@ import ua.syt0r.comicreader.database.ComicDatabase
 class HomeModule {
 
     @Provides
-    fun provideHomePresenter(database: ComicDatabase) = HomePresenter(database)
+    fun provideHomePresenter(database: ComicDatabase): HomeMVP.Presenter = HomePresenter(database)
 
 }

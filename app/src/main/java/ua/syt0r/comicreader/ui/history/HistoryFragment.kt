@@ -1,44 +1,62 @@
 package ua.syt0r.comicreader.ui.history
 
-import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ua.syt0r.comicreader.R
+import ua.syt0r.comicreader.database.entity.DbFile
+import ua.syt0r.comicreader.util.NavigationUtils
+import ua.syt0r.comicreader.util.OnDBFileClickListener
+import ua.syt0r.comicreader.util.getComponent
+import java.io.File
+import javax.inject.Inject
 
-class HistoryFragment : Fragment() {
+class HistoryFragment : Fragment(), HistoryMVP.View {
 
-    lateinit var viewModel: HistoryViewModel
+    @Inject lateinit var presenter: HistoryMVP.Presenter
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        viewModel = ViewModelProviders.of(this).get(HistoryViewModel::class.java)
-    }
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: HistoryAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_history, container, false)
+        val navController = NavHostFragment.findNavController(this)
 
-        val recyclerView = root.findViewById<RecyclerView>(R.id.recycler)
+        getComponent(activity!!).inject(this)
 
+        recyclerView = root.findViewById(R.id.recycler)
         recyclerView.layoutManager = GridLayoutManager(context,
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 5)
 
-        val adapter = HistoryAdapter()
+        adapter = HistoryAdapter()
         recyclerView.adapter = adapter
 
-        viewModel.historyRecords.observe(this, Observer {
-            adapter.historyRecords = it
-            adapter.notifyDataSetChanged()
-        })
+        val onDBFileClickListener = object : OnDBFileClickListener {
+            override fun onClick(dbFile: DbFile) {
+                NavigationUtils.navigate(File(dbFile.path), navController, root.context)
+            }
+        }
+        adapter.onDBFileClickListener = onDBFileClickListener
+
+        presenter.attachView(this, this)
+        presenter.loadHistory()
 
         return root
+    }
+
+    override fun showHistory(history: List<DbFile>) {
+        adapter.historyRecords = history
+        adapter.notifyDataSetChanged()
+    }
+
+    override fun showEmptyHistory() {
+
     }
 
 }

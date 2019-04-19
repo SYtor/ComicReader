@@ -4,10 +4,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import ua.syt0r.comicreader.database.ComicDatabase
-import ua.syt0r.comicreader.ui.base.BasePresenter
 import javax.inject.Inject
 
-class HomePresenter @Inject constructor(var database: ComicDatabase) : BasePresenter<HomeMVP.View>(), HomeMVP.Presenter {
+class HomePresenter @Inject constructor(var database: ComicDatabase) : HomeMVP.Presenter() {
 
     private val disposable = CompositeDisposable()
 

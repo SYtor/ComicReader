@@ -5,16 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.database.entity.DbFile
+import ua.syt0r.comicreader.util.NavigationUtils
+import ua.syt0r.comicreader.util.OnDBFileClickListener
 import ua.syt0r.comicreader.util.getComponent
+import java.io.File
 import javax.inject.Inject
 
 class HomeFragment : Fragment() , HomeMVP.View {
 
-    @Inject lateinit var presenter: HomePresenter
+    @Inject lateinit var presenter: HomeMVP.Presenter
 
     lateinit var historyRecycler: RecyclerView
     lateinit var historyAdapter: HorizontalAdapter
@@ -26,6 +31,7 @@ class HomeFragment : Fragment() , HomeMVP.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_home, container, false)
+        val navController = NavHostFragment.findNavController(this)
 
         getComponent(activity!!).inject(this)
 
@@ -40,6 +46,15 @@ class HomeFragment : Fragment() , HomeMVP.View {
         pinRecycler.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         pinRecycler.adapter = pinAdapter
         emptyPinsView = root.findViewById(R.id.empty_pins_text)
+
+        val onDBFileClickListener = object : OnDBFileClickListener {
+            override fun onClick(dbFile: DbFile) {
+                NavigationUtils.navigate(File(dbFile.path), navController, root.context)
+            }
+        }
+
+        historyAdapter.onDBFileClickListener = onDBFileClickListener
+        pinAdapter.onDBFileClickListener = onDBFileClickListener
 
         presenter.attachView(this, this)
         presenter.loadData()

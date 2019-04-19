@@ -10,11 +10,13 @@ import com.squareup.picasso.Picasso
 import ua.syt0r.comicreader.util.FileType
 import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.database.entity.DbFile
+import ua.syt0r.comicreader.util.OnDBFileClickListener
 import java.io.File
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
 
     var historyRecords: List<DbFile>? = null
+    var onDBFileClickListener: OnDBFileClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -41,8 +43,16 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView = itemView.findViewById<ImageView>(R.id.image)
-        val textView = itemView.findViewById<TextView>(R.id.text)
+
+        val imageView: ImageView = itemView.findViewById(R.id.image)
+        val textView: TextView = itemView.findViewById(R.id.text)
+
+        init {
+            itemView.setOnClickListener {
+                historyRecords?.getOrNull(adapterPosition)?.also { onDBFileClickListener?.onClick(it) }
+            }
+        }
+
     }
 
 }
