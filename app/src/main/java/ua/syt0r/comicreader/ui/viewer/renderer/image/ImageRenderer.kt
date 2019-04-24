@@ -8,12 +8,14 @@ import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.github.piasy.biv.BigImageViewer
 import com.github.piasy.biv.loader.fresco.FrescoImageLoader
+import io.reactivex.Single
 import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.ui.viewer.renderer.Renderer
 
 class ImageRenderer(private val context: Context) : Renderer(context) {
 
     private lateinit var recyclerView: RecyclerView
+    private lateinit var layoutManager: LinearLayoutManager
     private lateinit var adapter: ImageRendererAdapter
 
     override fun onCreateView(): View {
@@ -21,7 +23,7 @@ class ImageRenderer(private val context: Context) : Renderer(context) {
         val root = LayoutInflater.from(context).inflate(R.layout.renderer_image_layout, null)
         recyclerView = root.findViewById(R.id.recycler)
 
-        val layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         recyclerView.layoutManager = layoutManager
 
         adapter = ImageRendererAdapter()
@@ -54,5 +56,7 @@ class ImageRenderer(private val context: Context) : Renderer(context) {
         adapter.notifyDataSetChanged()
         positionChangeListener?.onPositionChanged(0, list.size)
     }
+
+    override fun getReadingPosition(): Int = layoutManager.findFirstVisibleItemPosition()
 
 }

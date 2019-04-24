@@ -12,5 +12,6 @@ data class DbFile(
     var type: Int = 0,
     var pinned: Int = 0,
     var pinnedDate: Long = 0L,
+    var lastPosition: Int = 0,
     var thumb: String = ""
 )

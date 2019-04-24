@@ -18,10 +18,12 @@ import ua.syt0r.comicreader.ui.home.HomeModule
 import ua.syt0r.comicreader.ui.home.HomePresenter
 import ua.syt0r.comicreader.ui.main.MainActivity
 import ua.syt0r.comicreader.ui.viewer.ViewerActivity
+import ua.syt0r.comicreader.ui.viewer.ViewerMVP
+import ua.syt0r.comicreader.ui.viewer.ViewerModule
 import javax.inject.Singleton
 
 @Component(modules = [ApplicationModule::class, DatabaseModule::class, HomeModule::class, HistoryModule::class,
-    BrowseModule::class])
+    BrowseModule::class, ViewerModule::class])
 @Singleton
 interface ApplicationComponent {
 
@@ -39,5 +41,7 @@ interface ApplicationComponent {
     fun getHomePresenter(): HomeMVP.Presenter
     fun getHistoryPresenter(): HistoryMVP.Presenter
     fun getBrowsePresenter(): BrowseMVP.Presenter
+
+    fun getViewerPresenter(): ViewerMVP.Presenter
 
 }

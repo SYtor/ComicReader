@@ -2,15 +2,13 @@ package ua.syt0r.comicreader.ui.viewer
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import me.zhanghai.android.systemuihelper.SystemUiHelper
 import ua.syt0r.comicreader.util.FileType
 import ua.syt0r.comicreader.R
@@ -18,43 +16,64 @@ import ua.syt0r.comicreader.ui.viewer.renderer.pdf.PdfRenderer
 import ua.syt0r.comicreader.ui.viewer.renderer.image.ImageRenderer
 import ua.syt0r.comicreader.ui.viewer.renderer.Renderer
 import ua.syt0r.comicreader.ui.viewer.renderer.RendererContainer
-import ua.syt0r.comicreader.util.getFileType
-import java.io.File
+import ua.syt0r.comicreader.util.getComponent
+import javax.inject.Inject
 
-class ViewerActivity : AppCompatActivity() {
+class ViewerActivity : AppCompatActivity(), ViewerMVP.View {
+
+    @Inject lateinit var presenter: ViewerMVP.Presenter
+
+    private lateinit var renderer: Renderer
+    private lateinit var rendererContainer: RendererContainer
+    private lateinit var systemUiHelper: SystemUiHelper
+    private lateinit var seekBar: SeekBar
+    private lateinit var progressText: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_viewer)
 
-        val viewModel = ViewModelProviders.of(this).get(ViewerViewModel::class.java)
+        getComponent(this).inject(this)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        val rendererContainer = findViewById<RendererContainer>(R.id.renderer_container)
-        val bottomLayout = findViewById<View>(R.id.bottom_panel)
-        val seekBar = findViewById<SeekBar>(R.id.chapter_progress)
-        val progressText = findViewById<TextView>(R.id.chapter_progress_text)
+        rendererContainer = findViewById(R.id.renderer_container)
+        seekBar = findViewById(R.id.chapter_progress)
+        progressText = findViewById(R.id.chapter_progress_text)
 
         //Setup toolbar
+
+        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        val bottomLayout = findViewById<View>(R.id.bottom_panel)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val systemUiHelper = SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
+        systemUiHelper = SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
             SystemUiHelper.FLAG_IMMERSIVE_STICKY, SystemUIVisibilityListener(toolbar, bottomLayout))
         systemUiHelper.show()
 
         //Load data
 
-        val path = intent.data!!.path
-        val file = File(path)
-        val type = getFileType(file)
-        viewModel.loadData(file, type)
+        presenter.attachView(this, this)
+        presenter.loadFile(intent?.data?.path)
 
-        Log.d("Debug", "path: $path")
-        Log.d("Debug", "type: $type")
+    }
 
-        val renderer = when (type) {
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.viewer_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        when(item?.itemId) {
+            R.id.options -> OptionsFragment().show(supportFragmentManager,  null)
+            android.R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun setRenderer(rendererType: Int) {
+
+        renderer = when (rendererType) {
             FileType.PDF -> PdfRenderer(this)
             else -> ImageRenderer(this)
         }
@@ -84,32 +103,16 @@ class ViewerActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) { isTouching = false }
         })
 
-        viewModel.mutableData.observe(this, Observer {
-
-            if (it != null) {
-                renderer.setData(it)
-                return@Observer
-            }
-
-            //TODO loading message
-
-        })
-
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.viewer_menu, menu)
-        return true
+    override fun setData(data: Any) {
+        renderer.setData(data)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when(item?.itemId) {
-            R.id.options -> {
-                OptionsFragment().show(supportFragmentManager,  null)
-            }
-            android.R.id.home -> finish()
-        }
-        return super.onOptionsItemSelected(item)
+    override fun showErrorMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+
+    override fun getReadingPosition(): Int = renderer.getReadingPosition()
 
 }

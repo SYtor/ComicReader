@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import ua.syt0r.comicreader.util.FileType
 import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.database.entity.DbFile
@@ -32,7 +33,7 @@ class HorizontalAdapter : RecyclerView.Adapter<HorizontalAdapter.ViewHolder>(){
             holder.textView.text = File(dbFile.path).name
             when(dbFile.type) {
                 FileType.FOLDER -> holder.imageView.setImageResource(R.drawable.ic_folder)
-                FileType.IMAGE -> {}
+                FileType.IMAGE -> { Picasso.get().load(dbFile.path).fit().centerCrop().into(holder.imageView)}
                 FileType.PDF -> holder.imageView.setImageResource(R.drawable.ic_google_drive_pdf_file)
                 else -> holder.imageView.setImageResource(R.drawable.ic_file)
             }

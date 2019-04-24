@@ -36,5 +36,7 @@ class PdfRenderer(private val context: Context) : Renderer(context) {
             .load()
     }
 
+    override fun getReadingPosition(): Int = pdfView.currentPage
+
 }
 
