@@ -49,6 +49,7 @@ class HomeFragment : Fragment() , HomeMVP.View {
 
         val onDBFileClickListener = object : OnDBFileClickListener {
             override fun onClick(dbFile: DbFile) {
+                //TODO fix image file
                 NavigationUtils.navigate(File(dbFile.path), navController, root.context)
             }
         }

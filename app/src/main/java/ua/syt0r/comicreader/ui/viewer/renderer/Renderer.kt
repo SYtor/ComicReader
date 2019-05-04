@@ -1,9 +1,8 @@
 package ua.syt0r.comicreader.ui.viewer.renderer
 
-import android.content.Context
 import android.view.View
 
-abstract class Renderer(context: Context) {
+abstract class Renderer {
 
     var positionChangeListener: PositionChangeListener? = null
 

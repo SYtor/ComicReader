@@ -6,10 +6,12 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.navigation.NavController
 import ua.syt0r.comicreader.R
+import ua.syt0r.comicreader.ui.browse.BrowserFragment
 import ua.syt0r.comicreader.ui.viewer.ViewerActivity
 import java.io.File
 
 class NavigationUtils {
+
     companion object {
 
         fun navigate(file: File, navController: NavController, context: Context) {
@@ -24,12 +26,13 @@ class NavigationUtils {
 
                 FileType.FOLDER -> {
                     navController.navigate(R.id.browse_fragment, Bundle().apply {
-                        putString("","")
+                        putString(BrowserFragment.FOLDER_KEY, file.absolutePath)
                     })
                 }
 
             }
         }
+
     }
 
 }

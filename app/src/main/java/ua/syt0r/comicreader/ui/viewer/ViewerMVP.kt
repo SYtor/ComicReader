@@ -9,6 +9,7 @@ class ViewerMVP {
         fun setData(data: Any)
         fun showErrorMessage(message: String)
         fun getReadingPosition(): Int
+        fun scrollToPosition(position: Int)
     }
 
     abstract class Presenter : BasePresenter<View>() {

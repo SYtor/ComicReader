@@ -8,7 +8,7 @@ import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.ui.viewer.renderer.Renderer
 import java.io.File
 
-class PdfRenderer(private val context: Context) : Renderer(context) {
+class PdfRenderer(private val context: Context) : Renderer() {
 
     private lateinit var pdfView: PDFView
 

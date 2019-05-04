@@ -19,4 +19,8 @@
         long clicking at browse screen
     </string>
 
+    <string name="permission_granted">Access granted</string>
+    <string name="permission_not_granted">Permission not granted. App wont work unless permission is granted</string>
+    <string name="retry">Retry</string>
+
 </resources>

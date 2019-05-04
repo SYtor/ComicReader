@@ -1,36 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingLeft="8dp">
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent">
 
-        <TextView
-                android:layout_width="0dp"
+        <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Root"
-                android:textSize="18sp"
-                android:id="@+id/parent_folder_text"
-                android:layout_weight="1"
-                android:ellipsize="start"
-                android:singleLine="true"/>
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingLeft="8dp">
 
-        <ProgressBar
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:id="@+id/progress"/>
+            <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Root"
+                    android:textSize="18sp"
+                    android:id="@+id/parent_folder_text"
+                    android:layout_weight="1"
+                    android:ellipsize="start"
+                    android:singleLine="true"/>
+
+            <ProgressBar
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:id="@+id/progress"/>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/recycler"/>
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recycler"/>
-
-</LinearLayout>
+</FrameLayout>

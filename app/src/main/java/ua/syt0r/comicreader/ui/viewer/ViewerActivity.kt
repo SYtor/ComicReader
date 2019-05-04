@@ -49,13 +49,22 @@ class ViewerActivity : AppCompatActivity(), ViewerMVP.View {
 
         systemUiHelper = SystemUiHelper(this, SystemUiHelper.LEVEL_IMMERSIVE,
             SystemUiHelper.FLAG_IMMERSIVE_STICKY, SystemUIVisibilityListener(toolbar, bottomLayout))
-        systemUiHelper.show()
 
-        //Load data
+        //Setup presenter
 
         presenter.attachView(this, this)
-        presenter.loadFile(intent?.data?.path)
 
+        if (savedInstanceState == null) {
+            systemUiHelper.show()
+            presenter.loadFile(intent?.data?.path)
+        } else {
+            //TODO Restore state
+        }
+
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -74,7 +83,7 @@ class ViewerActivity : AppCompatActivity(), ViewerMVP.View {
     override fun setRenderer(rendererType: Int) {
 
         renderer = when (rendererType) {
-            FileType.PDF -> PdfRenderer(this)
+            Renderer.PDF -> PdfRenderer(this)
             else -> ImageRenderer(this)
         }
 
@@ -92,16 +101,7 @@ class ViewerActivity : AppCompatActivity(), ViewerMVP.View {
 
         //Setup seek bar
 
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            var isTouching = false
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                progressText.text = "${seekBar?.progress?.plus(1) ?: 0}/${seekBar?.max?.plus(1) ?: 0}"
-                if (isTouching)
-                    renderer.scrollToPosition(progress)
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {isTouching = true }
-            override fun onStopTrackingTouch(seekBar: SeekBar?) { isTouching = false }
-        })
+        seekBar.setOnSeekBarChangeListener(ViewerSeekBarChangeListener())
 
     }
 
@@ -114,5 +114,28 @@ class ViewerActivity : AppCompatActivity(), ViewerMVP.View {
     }
 
     override fun getReadingPosition(): Int = renderer.getReadingPosition()
+
+    override fun scrollToPosition(position: Int) {
+        renderer.scrollToPosition(position)
+        seekBar.progress = position
+    }
+
+    private inner class ViewerSeekBarChangeListener : SeekBar.OnSeekBarChangeListener {
+
+        var isTouching = false
+
+        override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            progressText.text = "${seekBar?.progress?.plus(1) ?: 0}/${seekBar?.max?.plus(1) ?: 0}"
+            if (isTouching)
+                renderer.scrollToPosition(progress)
+        }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {isTouching = true }
+
+        override fun onStopTrackingTouch(seekBar: SeekBar?) { isTouching = false }
+
+    }
+
+
 
 }

@@ -26,9 +26,6 @@ class ViewerPresenter @Inject constructor(
     val database: ComicDatabase
 ) : ViewerMVP.Presenter() {
 
-    private val nearFiles = ArrayList<File>()
-    private var currentLoc = 0
-
     private val tmpFolder: File
 
     init {
@@ -77,7 +74,7 @@ class ViewerPresenter @Inject constructor(
 
                 val dbFile = database.dbFileDao().getByFilePath(path2)
                 if (dbFile == null) {
-                    val newFile = DbFile(0, path2, System.currentTimeMillis(), fileType, 0, 0, view?.getReadingPosition() ?: 0, "")
+                    val newFile = DbFile(0, path2, System.currentTimeMillis(), fileType, 0, 0, 0, "")
                     database.dbFileDao().insert(newFile)
                 } else {
                     dbFile.readTime = System.currentTimeMillis()
@@ -97,37 +94,6 @@ class ViewerPresenter @Inject constructor(
 
                 //TODO load files list with same format for next/previous
 
-                nearFiles.clear()
-
-                if (fileType == FileType.IMAGE) {
-
-                    val imageFolder = file.parentFile
-                    val folder = imageFolder.parentFile
-
-                    folder.listFiles()?.forEach {
-                        val t = getFileType(it)
-                        if (t == fileType) {
-                            nearFiles.add(it)
-                            if (it.path == imageFolder.path)
-                                currentLoc = nearFiles.size - 1
-                        }
-                    }
-
-                } else {
-
-                    val folder = file.parentFile
-                    folder.listFiles()?.forEach {
-                        val t = getFileType(it)
-                        if (t == fileType) {
-                            nearFiles.add(it)
-                            if (it.path == file.path)
-                                currentLoc = nearFiles.size - 1
-                        }
-                    }
-
-                }
-
-
                 return@fromCallable when(fileType) {
                     FileType.IMAGE -> getImagesFromFolder(file.parentFile)
                     FileType.FOLDER -> getImagesFromFolder(file)
@@ -140,7 +106,11 @@ class ViewerPresenter @Inject constructor(
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                    { view?.setData(it) },
+                    {
+                        view?.setData(it)
+                        if (fileType == FileType.IMAGE && it is List<*>)
+                            view?.scrollToPosition(it.indexOf(file.absolutePath))
+                    },
                     { view?.showErrorMessage(it.message ?: "")}
                 )
         )

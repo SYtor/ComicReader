@@ -1,6 +1,12 @@
 package ua.syt0r.comicreader.ui.browse
 
+import android.Manifest
+import android.app.Activity
 import android.app.Application
+import android.content.pm.PackageManager
+import android.os.Build
+import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -81,7 +87,7 @@ class BrowsePresenter @Inject constructor(
                 } else {
                     database.dbFileDao().insert(
                         DbFile(0, file.path, 0, getFileType(file),
-                            1, System.currentTimeMillis(), "")
+                            1, System.currentTimeMillis(), 0, "")
                     )
                 }
             }
@@ -89,6 +95,27 @@ class BrowsePresenter @Inject constructor(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe()
         )
+    }
+
+    override fun checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&  ContextCompat.checkSelfPermission(application,
+                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            view?.provideFragment()?.requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_CODE)
+
+        }
+    }
+
+    override fun onPermissionResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when(requestCode) {
+            PERMISSION_REQUEST_CODE -> {
+
+                view?.onPermissionUpdate((grantResults.isNotEmpty() &&
+                        grantResults.first() == PackageManager.PERMISSION_GRANTED))
+
+            }
+        }
     }
 
     override fun onViewDestroyed() {
@@ -124,6 +151,10 @@ class BrowsePresenter @Inject constructor(
             ?.also { contents -> currentFiles.addAll(contents) }
 
         return files
+    }
+
+    companion object {
+        const val PERMISSION_REQUEST_CODE = 969
     }
 
 }

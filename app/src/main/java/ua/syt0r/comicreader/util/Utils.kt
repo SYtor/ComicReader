@@ -99,7 +99,7 @@ fun createThumbnail(context: Context, database: ComicDatabase, file: File) = Cor
             dbFile.thumb = it
             dao.update(dbFile)
         } else {
-            dao.insert(DbFile(0L, file.path,  0L, fileType, 0, 0, it))
+            dao.insert(DbFile(0L, file.path,  0L, fileType, 0, 0, 0, it))
         }
     }
 

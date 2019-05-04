@@ -12,7 +12,7 @@ import io.reactivex.Single
 import ua.syt0r.comicreader.R
 import ua.syt0r.comicreader.ui.viewer.renderer.Renderer
 
-class ImageRenderer(private val context: Context) : Renderer(context) {
+class ImageRenderer(private val context: Context) : Renderer() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var layoutManager: LinearLayoutManager
